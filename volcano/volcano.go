@@ -265,3 +265,26 @@ func (z *zip) Next() (Row, bool) {
 	}
 	return append(append(make(Row, 0), leftRow...), rightRow...), true
 }
+
+type inspect struct {
+	node Node
+}
+
+func Inspect(node Node) Node {
+	return &inspect{
+		node: node,
+	}
+}
+
+func (i *inspect) Start() {
+	i.node.Start()
+}
+
+func (i *inspect) Next() (Row, bool) {
+	row, ok := i.node.Next()
+	if !ok {
+		return nil, false
+	}
+	fmt.Println(row)
+	return row, true
+}

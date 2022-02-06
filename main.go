@@ -165,6 +165,14 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Exercise 3: Inspect
+	fmt.Println("Inspect")
+	iter = volcano.Inspect(volcano.ScanRelation(c))
+	iter.Start()
+	for _, ok := iter.Next(); ok; _, ok = iter.Next() {
+		// inspect prints itself
+	}
 }
 
 func main() {
