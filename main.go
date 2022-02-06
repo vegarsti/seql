@@ -149,6 +149,14 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Exercise 1: Union
+	fmt.Println("Union")
+	iter = volcano.Union(volcano.ScanRelation(c), volcano.ScanRelation(c))
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

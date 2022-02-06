@@ -208,3 +208,31 @@ func (c *cross) Next() (Row, bool) {
 	c.idx++
 	return append(append(make(Row, 0), leftRow...), rightRow...), true
 }
+
+type union struct {
+	left  Node
+	right Node
+}
+
+func Union(left Node, right Node) Node {
+	return &union{
+		left:  left,
+		right: right,
+	}
+}
+
+func (u *union) Start() {
+	u.left.Start()
+	u.right.Start()
+}
+
+func (u *union) Next() (Row, bool) {
+	row, ok := u.left.Next()
+	if !ok {
+		row, ok = u.right.Next()
+		if !ok {
+			return nil, false
+		}
+	}
+	return row, true
+}
