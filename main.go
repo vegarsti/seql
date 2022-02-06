@@ -92,6 +92,17 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	fmt.Println("Lives where they're from:")
+	iter = volcano.EqualsSelect(
+		volcano.ScanRelation(r),
+		1,
+		2,
+	)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

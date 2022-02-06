@@ -97,3 +97,35 @@ func ConstantSelect(input Node, i int, d string) Node {
 		d:     d,
 	}
 }
+
+type equalsSelect struct {
+	input Node
+	i, j  int
+}
+
+func (s *equalsSelect) Start() {
+	s.input.Start()
+}
+
+func (s *equalsSelect) Next() (Row, bool) {
+	for {
+		row, ok := s.input.Next()
+		if !ok {
+			// We've exhausted our input, so we're exhausted too.
+			return nil, false
+		}
+
+		if row[s.i] == row[s.j] {
+			// This row passed the test, so emit it.
+			return row, true
+		}
+	}
+}
+
+func EqualsSelect(input Node, i, j int) Node {
+	return &equalsSelect{
+		input: input,
+		i:     i,
+		j:     j,
+	}
+}
