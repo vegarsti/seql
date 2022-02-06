@@ -157,6 +157,14 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Exercise 2: Zip
+	fmt.Println("Zip")
+	iter = volcano.Zip(volcano.ScanRelation(r), volcano.ScanRelation(c))
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

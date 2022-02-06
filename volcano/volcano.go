@@ -236,3 +236,32 @@ func (u *union) Next() (Row, bool) {
 	}
 	return row, true
 }
+
+type zip struct {
+	left  Node
+	right Node
+}
+
+func Zip(left Node, right Node) Node {
+	return &zip{
+		left:  left,
+		right: right,
+	}
+}
+
+func (z *zip) Start() {
+	z.left.Start()
+	z.right.Start()
+}
+
+func (z *zip) Next() (Row, bool) {
+	leftRow, ok := z.left.Next()
+	if !ok {
+		return nil, false
+	}
+	rightRow, ok := z.right.Next()
+	if !ok {
+		return nil, false
+	}
+	return append(append(make(Row, 0), leftRow...), rightRow...), true
+}
