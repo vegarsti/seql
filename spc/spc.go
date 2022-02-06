@@ -27,3 +27,22 @@ func (r Relation) String() string {
 	}
 	return buf.String()
 }
+
+// ConstantSelect filters rel to only the rows for which the i-th column is equal
+// to d.
+func ConstantSelect(rel Relation, i int, d string) Relation {
+	// Create a slice to store the new result
+	result := make([]Row, 0)
+	// Iterate over the old row set, adding a row to the new row set if it passes
+	// the test.
+	for _, row := range rel.rows {
+		if row[i] == d {
+			result = append(result, row)
+		}
+	}
+	return Relation{
+		// The output has the same colNames as the input.
+		colNames: rel.colNames,
+		rows:     result,
+	}
+}

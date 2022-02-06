@@ -17,4 +17,6 @@ func main() {
 		},
 	)
 	fmt.Println(r)
+	fmt.Println("Lives in New York:")
+	fmt.Println(spc.ConstantSelect(r, 2, "New York"))
 }
