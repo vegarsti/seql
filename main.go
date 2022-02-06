@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"seql/spc"
+	"seql/volcano"
 )
 
 func spcMain() {
@@ -64,6 +65,24 @@ func spcMain() {
 	)
 }
 
+func volcanoMain() {
+	r := volcano.NewRelation(
+		[]string{"name", "from", "resides"},
+		[]volcano.Row{
+			{"Jordan", "New York", "New York"},
+			{"Lauren", "California", "New York"},
+			{"Justin", "Ontario", "New York"},
+			{"Devin", "California", "California"},
+			{"Smudge", "Ontario", "Ontario"},
+		},
+	)
+	iter := volcano.ScanRelation(r)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
+}
+
 func main() {
-	spcMain()
+	volcanoMain()
 }
