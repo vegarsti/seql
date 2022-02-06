@@ -81,6 +81,17 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	fmt.Println("Justin:")
+	iter = volcano.ConstantSelect(
+		volcano.ScanRelation(r),
+		0,
+		"Justin",
+	)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

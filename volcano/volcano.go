@@ -64,3 +64,36 @@ func ScanRelation(data Relation) Node {
 		idx:  0,
 	}
 }
+
+type constantSelect struct {
+	input Node
+	i     int
+	d     string
+}
+
+func (s *constantSelect) Start() {
+	s.input.Start()
+}
+
+func (s *constantSelect) Next() (Row, bool) {
+	for {
+		row, ok := s.input.Next()
+		if !ok {
+			// We've exhausted our input, so we're exhausted too.
+			return nil, false
+		}
+
+		if row[s.i] == s.d {
+			// This row passed the test, so emit it.
+			return row, true
+		}
+	}
+}
+
+func ConstantSelect(input Node, i int, d string) Node {
+	return &constantSelect{
+		input: input,
+		i:     i,
+		d:     d,
+	}
+}
