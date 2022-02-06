@@ -87,3 +87,21 @@ func Project(rel Relation, cols []int) Relation {
 		rows:     result,
 	}
 }
+
+// Cross returns a row for every pair of rows in rel1 and rel2.
+func Cross(rel1, rel2 Relation) Relation {
+	// Create a slice to store the new result, initialized to be length 0,
+	// and with capacity as len(rel1) * rel(2)
+	result := make([]Row, 0, len(rel1.colNames)*len(rel2.colNames))
+	for _, row1 := range rel1.rows {
+		for _, row2 := range rel2.rows {
+			newRow := append(append(make(Row, 0), row1...), row2...)
+			result = append(result, newRow)
+		}
+	}
+	colNames := append(append(make([]string, 0), rel1.colNames...), rel2.colNames...)
+	return Relation{
+		colNames: colNames,
+		rows:     result,
+	}
+}
