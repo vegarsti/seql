@@ -21,4 +21,6 @@ func main() {
 	fmt.Println(spc.ConstantSelect(r, 2, "New York"))
 	fmt.Println("Lives where they're from:")
 	fmt.Println(spc.EqualsSelect(r, 1, 2))
+	fmt.Println("Only name and resides:")
+	fmt.Println(spc.Project(r, []int{0, 2}))
 }

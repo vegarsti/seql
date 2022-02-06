@@ -65,3 +65,25 @@ func EqualsSelect(rel Relation, i, j int) Relation {
 		rows:     result,
 	}
 }
+
+// Project restrict rel to only the columns in cols
+func Project(rel Relation, cols []int) Relation {
+	// Restrict each row to cols.
+	result := make([]Row, 0)
+	for _, row := range rel.rows {
+		newRow := make(Row, len(cols))
+		for j, idx := range cols {
+			newRow[j] = row[idx]
+		}
+		result = append(result, newRow)
+	}
+	// Compute the new set of colNames
+	colNames := make([]string, len(cols))
+	for i, idx := range cols {
+		colNames[i] = rel.colNames[idx]
+	}
+	return Relation{
+		colNames: colNames,
+		rows:     result,
+	}
+}
