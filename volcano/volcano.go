@@ -159,3 +159,52 @@ func Project(input Node, cols []int) Node {
 		cols:  cols,
 	}
 }
+
+type cross struct {
+	left  Node
+	right Node
+	// leftBuffer contains all the rows from left
+	leftBuffer []Row
+	// row is the current row from right
+	row Row
+	// idx is the current pointer into leftBuffer
+	idx int
+}
+
+func (c *cross) Start() {
+	c.left.Start()
+	c.right.Start()
+	// Buffer up everything in left
+	for row, ok := c.left.Next(); ok; row, ok = c.left.Next() {
+		c.leftBuffer = append(c.leftBuffer, row)
+	}
+	// Start out as though we finished an iteratio
+	c.idx = len(c.leftBuffer)
+}
+
+func Cross(left Node, right Node) Node {
+	return &cross{
+		left:       left,
+		right:      right,
+		leftBuffer: make([]Row, 0),
+		row:        nil,
+		idx:        0,
+	}
+}
+
+func (c *cross) Next() (Row, bool) {
+	// If we're done with left, reset it and grab a new row from right.
+	// This is in a loop to neatly handle the case where left has zero rows.
+	for c.idx >= len(c.leftBuffer) {
+		row, ok := c.right.Next()
+		if !ok {
+			return nil, false
+		}
+		c.row = row
+		c.idx = 0
+	}
+	leftRow := c.leftBuffer[c.idx]
+	rightRow := c.row
+	c.idx++
+	return append(append(make(Row, 0), leftRow...), rightRow...), true
+}

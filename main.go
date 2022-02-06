@@ -110,6 +110,45 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	c := volcano.NewRelation(
+		[]string{"location", "country"},
+		[]volcano.Row{
+			{"New York", "United States"},
+			{"California", "United States"},
+			{"Ontario", "Canada"},
+		},
+	)
+
+	fmt.Println()
+	fmt.Println("What country Smudge lives in:")
+	iter = volcano.Project(
+		// Only keep the row with name (0) = "Smudge".
+		volcano.ConstantSelect(
+			// Throw away everything except the name (0) and the country (4).
+			volcano.Project(
+				// We only want the rows where the "resides" (2) location matches the
+				// "location" (3).
+				volcano.EqualsSelect(
+					// First, grab every pair of rows.
+					volcano.Cross(
+						volcano.ScanRelation(r),
+						volcano.ScanRelation(c),
+					),
+					2,
+					3,
+				),
+				[]int{0, 4},
+			),
+			0,
+			"Smudge",
+		),
+		[]int{1},
+	)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {
