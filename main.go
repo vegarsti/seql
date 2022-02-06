@@ -5,7 +5,7 @@ import (
 	"seql/spc"
 )
 
-func main() {
+func spcMain() {
 	r := spc.NewRelation(
 		[]string{"name", "from", "resides"},
 		[]spc.Row{
@@ -62,4 +62,8 @@ func main() {
 			[]int{1},
 		),
 	)
+}
+
+func main() {
+	spcMain()
 }
