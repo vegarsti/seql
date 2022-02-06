@@ -2,8 +2,19 @@ package main
 
 import (
 	"fmt"
+	"seql/spc"
 )
 
 func main() {
-	fmt.Println()
+	r := spc.NewRelation(
+		[]string{"name", "from", "resides"},
+		[]spc.Row{
+			{"Jordan", "New York", "New York"},
+			{"Lauren", "California", "New York"},
+			{"Justin", "Ontario", "New York"},
+			{"Devin", "California", "California"},
+			{"Smudge", "Ontario", "Ontario"},
+		},
+	)
+	fmt.Println(r)
 }
