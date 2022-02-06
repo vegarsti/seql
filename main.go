@@ -103,6 +103,13 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	fmt.Println("Only name and resides:")
+	iter = volcano.Project(volcano.ScanRelation(r), []int{0, 2})
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

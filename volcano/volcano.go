@@ -129,3 +129,33 @@ func EqualsSelect(input Node, i, j int) Node {
 		j:     j,
 	}
 }
+
+type project struct {
+	input Node
+	cols  []int
+}
+
+func (p *project) Start() {
+	p.input.Start()
+}
+
+func (p *project) Next() (Row, bool) {
+	row, ok := p.input.Next()
+	if !ok {
+		// We've exhausted our input, so we're exhausted too.
+		return nil, false
+	}
+
+	newRow := make(Row, len(p.cols))
+	for i, col := range p.cols {
+		newRow[i] = row[col]
+	}
+	return newRow, ok
+}
+
+func Project(input Node, cols []int) Node {
+	return &project{
+		input: input,
+		cols:  cols,
+	}
+}
