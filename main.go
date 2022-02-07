@@ -196,6 +196,16 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Exercise 5: Distinct
+	fmt.Println("Distinct languages used at companies c1 and c2")
+	iter = volcano.Distinct(
+		volcano.Union(volcano.ScanRelation(c1), volcano.ScanRelation(c2)),
+	)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

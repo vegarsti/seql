@@ -330,3 +330,42 @@ func (i *intersect) Next() (Row, bool) {
 	}
 	return nil, false
 }
+
+type distinct struct {
+	node Node
+	seen []Row
+}
+
+func Distinct(node Node) Node {
+	return &distinct{
+		node: node,
+		seen: make([]Row, 0),
+	}
+}
+
+func (d *distinct) Start() {
+	d.node.Start()
+}
+
+func (d *distinct) Next() (Row, bool) {
+	for row, ok := d.node.Next(); ok; row, ok = d.node.Next() {
+		emit := true
+		for _, seenRow := range d.seen {
+			allEqual := true
+			for i := range seenRow {
+				if seenRow[i] != row[i] {
+					allEqual = false
+					break
+				}
+			}
+			if allEqual {
+				emit = false
+			}
+		}
+		if emit {
+			d.seen = append(d.seen, row)
+			return row, true
+		}
+	}
+	return nil, false
+}
