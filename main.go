@@ -173,6 +173,29 @@ func volcanoMain() {
 	for _, ok := iter.Next(); ok; _, ok = iter.Next() {
 		// inspect prints itself
 	}
+
+	// Exercise 4: Intersect
+	fmt.Println("Intersect: Languages in use at companies c1 and c2")
+	c1 := volcano.NewRelation(
+		[]string{"language"},
+		[]volcano.Row{
+			{"Go"},
+			{"Kotlin"},
+		},
+	)
+	c2 := volcano.NewRelation(
+		[]string{"language"},
+		[]volcano.Row{
+			{"Python"},
+			{"Go"},
+			{"JavaScript"},
+		},
+	)
+	iter = volcano.Intersect(volcano.ScanRelation(c1), volcano.ScanRelation(c2))
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

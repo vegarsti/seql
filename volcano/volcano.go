@@ -288,3 +288,45 @@ func (i *inspect) Next() (Row, bool) {
 	fmt.Println(row)
 	return row, true
 }
+
+type intersect struct {
+	left  Node
+	right Node
+	// leftBuffer contains all the rows from left
+	leftBuffer []Row
+}
+
+func Intersect(left Node, right Node) Node {
+	return &intersect{
+		left:       left,
+		right:      right,
+		leftBuffer: make([]Row, 0),
+	}
+}
+
+func (i *intersect) Start() {
+	i.left.Start()
+	i.right.Start()
+	// Buffer up everything in left
+	for row, ok := i.left.Next(); ok; row, ok = i.left.Next() {
+		i.leftBuffer = append(i.leftBuffer, row)
+	}
+}
+
+func (i *intersect) Next() (Row, bool) {
+	for rightRow, ok := i.right.Next(); ok; rightRow, ok = i.right.Next() {
+		for _, leftRow := range i.leftBuffer {
+			emit := true
+			for i := range leftRow {
+				if leftRow[i] != rightRow[i] {
+					emit = false
+					break
+				}
+			}
+			if emit {
+				return rightRow, true
+			}
+		}
+	}
+	return nil, false
+}
