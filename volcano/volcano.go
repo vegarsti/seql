@@ -3,6 +3,7 @@ package volcano
 import (
 	"bytes"
 	"fmt"
+	"sort"
 )
 
 type Row []string
@@ -368,4 +369,48 @@ func (d *distinct) Next() (Row, bool) {
 		}
 	}
 	return nil, false
+}
+
+type order struct {
+	node   Node
+	byCols []int
+	buffer []Row // holds all rows from node
+	idx    int   // index into sorted buffer
+}
+
+func Order(node Node, byCols []int) Node {
+	return &order{
+		node:   node,
+		byCols: byCols,
+		buffer: make([]Row, 0),
+	}
+}
+
+func (o *order) Start() {
+	o.node.Start()
+	// Exhaust the node so we can sort it
+	for row, ok := o.node.Next(); ok; row, ok = o.node.Next() {
+		o.buffer = append(o.buffer, row)
+	}
+	// Sort buffer
+	sort.Slice(o.buffer, func(i, j int) bool {
+		for _, col := range o.byCols {
+			// Rows are equal in this column, use the next column
+			if o.buffer[i][col] == o.buffer[j][col] {
+				continue
+			}
+			return o.buffer[i][col] < o.buffer[j][col]
+		}
+		// No columns left in which the rows are different, so just return true
+		return true
+	})
+}
+
+func (o *order) Next() (Row, bool) {
+	if o.idx >= len(o.buffer) {
+		// No rows left
+		return nil, false
+	}
+	o.idx++
+	return o.buffer[o.idx-1], true
 }

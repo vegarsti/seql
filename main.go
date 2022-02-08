@@ -206,6 +206,15 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Exercise 6 (mine): Order
+	fmt.Println()
+	fmt.Println("Sort languages used at company c2 using Order")
+	iter = volcano.Order(volcano.ScanRelation(c2), []int{0})
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {
