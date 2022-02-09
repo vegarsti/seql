@@ -215,6 +215,15 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	// Join exercise: Hash join
+	fmt.Println()
+	fmt.Println("Hash join languages used at company c1 and c2")
+	iter = volcano.HashJoin(volcano.ScanRelation(c1), volcano.ScanRelation(c2), 0, 0)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {

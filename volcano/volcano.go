@@ -414,3 +414,62 @@ func (o *order) Next() (Row, bool) {
 	o.idx++
 	return o.buffer[o.idx-1], true
 }
+
+type hashJoin struct {
+	left         Node // probe input
+	right        Node // build input
+	index        map[string][]Row
+	leftJoinKey  int
+	rightJoinKey int
+	// leftRow is the current row from left
+	leftRow Row
+	// idx is the current pointer into the []Row slice in index[row[leftJoinKey]]
+	idx int
+}
+
+func HashJoin(left Node, right Node, leftJoinKey int, rightJoinKey int) Node {
+	return &hashJoin{
+		left:         left,
+		right:        right,
+		index:        make(map[string][]Row),
+		leftJoinKey:  leftJoinKey,
+		rightJoinKey: rightJoinKey,
+		leftRow:      nil,
+		idx:          0,
+	}
+}
+
+func (h *hashJoin) Start() {
+	h.left.Start()
+	h.right.Start()
+
+	// Build hash table from build input (right)
+	for row, ok := h.right.Next(); ok; row, ok = h.right.Next() {
+		h.index[row[h.rightJoinKey]] = append(h.index[row[h.rightJoinKey]], row)
+	}
+}
+
+func (h *hashJoin) Next() (Row, bool) {
+	for {
+		// no left row (yet)
+		if h.leftRow == nil {
+			row, ok := h.left.Next()
+			if !ok { // no more rows left in left; no more rows left to emit at all
+				break
+			}
+			h.leftRow = row
+		}
+		// get rows to join this row on
+		joinValue := h.leftRow[h.leftJoinKey]
+
+		// there is a row to emit; emit it
+		if h.idx < len(h.index[joinValue]) {
+			rightRow := h.index[joinValue][h.idx]
+			h.idx++
+			return append(append(make(Row, 0), h.leftRow...), rightRow...), true
+		}
+		// no more rows to emit on join; get next
+		h.leftRow = nil
+	}
+	return nil, false
+}
