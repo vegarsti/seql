@@ -447,29 +447,24 @@ func (h *hashJoin) Start() {
 	for row, ok := h.right.Next(); ok; row, ok = h.right.Next() {
 		h.index[row[h.rightJoinKey]] = append(h.index[row[h.rightJoinKey]], row)
 	}
+	// Initialize h.leftRow to first row in left (possibly nil)
+	row, _ := h.left.Next()
+	h.leftRow = row
 }
 
 func (h *hashJoin) Next() (Row, bool) {
-	for {
-		// no left row (yet)
-		if h.leftRow == nil {
-			row, ok := h.left.Next()
-			if !ok { // no more rows left in left; no more rows left to emit at all
-				break
-			}
-			h.leftRow = row
-		}
-		// get rows to join this row on
+	for h.leftRow != nil {
 		joinValue := h.leftRow[h.leftJoinKey]
-
 		// there is a row to emit; emit it
 		if h.idx < len(h.index[joinValue]) {
 			rightRow := h.index[joinValue][h.idx]
 			h.idx++
 			return append(append(make(Row, 0), h.leftRow...), rightRow...), true
 		}
-		// no more rows to emit on join; get next
-		h.leftRow = nil
+		// no more rows to emit from join row; get next and reset index pointer
+		row, _ := h.left.Next()
+		h.leftRow = row
+		h.idx = 0
 	}
 	return nil, false
 }

@@ -224,6 +224,31 @@ func volcanoMain() {
 	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
 		fmt.Println(row)
 	}
+
+	r1 := volcano.NewRelation(
+		[]string{"a", "b"},
+		[]volcano.Row{
+			{"1", "2"},
+			{"2", "2"},
+			{"3", "2"},
+		},
+	)
+
+	fmt.Println()
+	fmt.Println("Hash join")
+	iter = volcano.HashJoin(volcano.ScanRelation(r1), volcano.ScanRelation(r1), 0, 1)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
+
+	fmt.Println()
+	fmt.Println("Hash join")
+	iter = volcano.HashJoin(volcano.ScanRelation(r1), volcano.ScanRelation(r1), 0, 0)
+	iter.Start()
+	for row, ok := iter.Next(); ok; row, ok = iter.Next() {
+		fmt.Println(row)
+	}
 }
 
 func main() {
